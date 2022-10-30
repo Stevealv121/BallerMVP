@@ -1,2 +1,16 @@
 #ignore node modules
 node_modules
+
+#ignore .env file
+.env
+
+#ignore cache files
+.wwebjs_auth
+session.json
+chats/*
+!chats/.gitkeep
+media/*
+!media/.gitkeep
+mediaSend/*
+!mediaSend/.gitkeep
+!mediaSend/nota-de-voz.mp3
