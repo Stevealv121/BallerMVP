@@ -1,7 +1,7 @@
 const { calendar, auth, TIMEOFFSET, calendarId, TIMEZONE } = require('../config/calendar');
 
 // Get date-time string for calender
-const dateTimeForCalander = () => {
+const dateTimeForCalendar = () => {
 
     let date = new Date();
 
@@ -29,7 +29,8 @@ const dateTimeForCalander = () => {
 
     let startDate = event;
     // Delay in end time is 1
-    let endDate = new Date(new Date(startDate).setHours(startDate.getHours() + 1));
+    let endDate = new Date(new Date(startDate).setHours(startDate.getHours() + 5));
+    //let endDate = new Date(new Date(startDate).setHours(startDate.getDay() + 7));
 
     return {
         'start': startDate,
@@ -58,7 +59,7 @@ const insertEvent = async (event) => {
     }
 };
 
-let dateTime = dateTimeForCalander();
+let dateTime = dateTimeForCalendar();
 
 // Event for Google Calendar
 let event = {
@@ -83,24 +84,24 @@ let event = {
 //     });
 
 // Get all the events between two dates
-// const getEvents = async (dateTimeStart, dateTimeEnd) => {
+const getEvents = async (dateTimeStart, dateTimeEnd) => {
 
-//     try {
-//         let response = await calendar.events.list({
-//             auth: auth,
-//             calendarId: calendarId,
-//             timeMin: dateTimeStart,
-//             timeMax: dateTimeEnd,
-//             timeZone: 'Asia/Kolkata'
-//         });
+    try {
+        let response = await calendar.events.list({
+            auth: auth,
+            calendarId: calendarId,
+            timeMin: dateTimeStart,
+            timeMax: dateTimeEnd,
+            timeZone: TIMEZONE
+        });
 
-//         let items = response['data']['items'];
-//         return items;
-//     } catch (error) {
-//         console.log(`Error at getEvents --> ${error}`);
-//         return 0;
-//     }
-// };
+        let items = response['data']['items'];
+        return items;
+    } catch (error) {
+        console.log(`Error at getEvents --> ${error}`);
+        return 0;
+    }
+};
 
 // let start = '2020-10-03T00:00:00.000Z';
 // let end = '2020-10-04T00:00:00.000Z';
@@ -144,4 +145,4 @@ let event = {
 //         console.log(err);
 //     });
 
-module.exports = { insertEvent, event };
+module.exports = { insertEvent, getEvents, dateTimeForCalendar };

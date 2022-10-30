@@ -12,6 +12,7 @@ const { getMessages, responseMessages, bothResponse } = require('./controllers/f
 const { sendMedia, sendMessage, sendMessageButton, readChat } = require('./controllers/send')
 const { mongoose } = require('mongoose');
 const ConnectDB = require('./config/mongodb.js');
+const { getEvents, dateTimeForCalendar } = require('./adapter/calendar');
 
 const app = express();
 app.use(cors())
@@ -48,20 +49,6 @@ const listenMessage = () => client.on('message', async msg => {
     }
 
     /**
-     * Si estas usando dialogflow solo manejamos una funcion todo es IA
-     */
-
-    if (process.env.DATABASE === 'dialogflow') {
-        if (!message.length) return;
-        const response = await bothResponse(message);
-        await sendMessage(client, from, response.replyMessage);
-        if (response.media) {
-            sendMedia(client, from, response.media);
-        }
-        return
-    }
-
-    /**
     * Ver si viene de un paso anterior
     * Aqui podemos ir agregando más pasos
     * a tu gusto!
@@ -81,36 +68,41 @@ const listenMessage = () => client.on('message', async msg => {
     if (step) {
         const response = await responseMessages(step);
         console.log('response', response);
+        //console.log(typeof response);
+        let replyMessage = response.replyMessage;
 
-        /**
-         * Si quieres enviar botones
-         */
+        if (replyMessage !== 'Omitir') {
+            //Get all events from today, then send the list as a message
+            const dateFormat = dateTimeForCalendar();
+            getEvents(dateFormat.start, dateFormat.end).then((events) => {
+                console.log('events', events);
+                if (events.length > 0) {
+                    let message = 'Estos son los eventos de hoy:\n';
+                    events.forEach((event) => {
+                        message += `*${event.summary}*\n`;
+                        message += `*Hora de inicio:* ${event.start.dateTime}\n`;
+                        message += `*Hora de finalización:* ${event.end.dateTime}\n`;
+                        message += `*Descripción:* ${event.description}\n\n`;
+                    });
+                    replyMessage = message;
 
-        /*
-        * Este es el original
-        */
-        //await sendMessage(client, from, response.replyMessage, response.trigger);
+                } else {
+                    replyMessage = 'No hay eventos para hoy';
+                }
+                sendMessage(client, from, replyMessage, response.trigger);
+            }).catch((err) => {
+                console.log(err);
+            });
 
-        /**
-         * Modificado para que envia un simple dato, para probar mongo
-         */
-        //await sendMessage(client, from, response, null);
+        }
 
         /**
          * Original
+         * response.hasOwnProperty("actions")
          */
-        // if (response.hasOwnProperty('actions')) {
-        //     const { actions } = response;
-        //     await sendMessageButton(client, from, null, actions);
-        //     return
-        // }
+        if (response.actions) {
 
-        /**
-         * Test Mongo Botones
-         *  */
-        if (true) {
             const { actions } = response;
-            //console.log('actions', actions)
             await sendMessageButton(client, from, null, actions);
             return
         }
