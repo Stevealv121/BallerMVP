@@ -1,8 +1,16 @@
 const { get, reply, getIA } = require('../adapter')
 const { saveExternalFile, checkIsUrl } = require('./handle')
+const { insertEvent, event } = require('../adapter/calendar')
 
 const getMessages = async (message) => {
     const data = await get(message)
+    //Just for now, testing calendar integration
+    //TODO: Remove this later, but it worked!!
+    // insertEvent(event).then((res) => {
+    //     console.log(res);
+    // }).catch((err) => {
+    //     console.log(err);
+    // });
     //console.log('data', data);
     return data
 }
