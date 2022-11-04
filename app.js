@@ -10,9 +10,9 @@ const { connectionReady, connectionLost } = require('./controllers/connection')
 const { saveMedia } = require('./controllers/save')
 const { getMessages, responseMessages, bothResponse } = require('./controllers/flows')
 const { sendMedia, sendMessage, sendMessageButton, readChat } = require('./controllers/send')
+const { handleReservation } = require('./controllers/reservation');
 const { mongoose } = require('mongoose');
 const ConnectDB = require('./config/mongodb.js');
-const { getEvents, dateTimeForCalendar } = require('./adapter/calendar');
 
 const app = express();
 app.use(cors())
@@ -72,27 +72,10 @@ const listenMessage = () => client.on('message', async msg => {
         let replyMessage = response.replyMessage;
 
         if (replyMessage !== 'Omitir') {
-            //Get all events from today, then send the list as a message
-            const dateFormat = dateTimeForCalendar();
-            getEvents(dateFormat.start, dateFormat.end).then((events) => {
-                console.log('events', events);
-                if (events.length > 0) {
-                    let message = 'Estos son los eventos de hoy:\n';
-                    events.forEach((event) => {
-                        message += `*${event.summary}*\n`;
-                        message += `*Hora de inicio:* ${event.start.dateTime}\n`;
-                        message += `*Hora de finalización:* ${event.end.dateTime}\n`;
-                        message += `*Descripción:* ${event.description}\n\n`;
-                    });
-                    replyMessage = message;
 
-                } else {
-                    replyMessage = 'No hay eventos para hoy';
-                }
-                sendMessage(client, from, replyMessage, response.trigger);
-            }).catch((err) => {
-                console.log(err);
-            });
+            //Get all events from today, then send the list as a message
+            //replyMessage = await handleReservation(replyMessage);
+            sendMessage(client, from, replyMessage, response.trigger);
 
         }
 

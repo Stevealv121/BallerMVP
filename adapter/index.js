@@ -15,14 +15,7 @@ const get = (message) => new Promise((resolve, reject) => {
         const response = key || null
         resolve(response)
     }
-    /**
-     * Si usas MYSQL
-     */
-    // if (process.env.DATABASE === 'mysql') {
-    //     getData(message, (dt) => {
-    //         resolve(dt)
-    //     });
-    // }
+
     /**
      * Si usas mongodb
      */
@@ -50,27 +43,13 @@ const reply = (step) => new Promise((resolve, reject) => {
         resolve(resData);
         return
     }
-    /**
-     * Si usas MYSQL
-     */
-    // if (process.env.DATABASE === 'mysql') {
-    //     let resData = { replyMessage: '', media: null, trigger: null }
-    //     getReply(step, (dt) => {
-    //         resData = { ...resData, ...dt }
-    //         resolve(resData)
 
-    //     });
-    // }
     /**
      * Si usas mongodb
      *  
         */
     if (process.env.DATABASE === 'mongodb') {
-        //let resData = { replyMessage: '', media: null, trigger: null }
         getResponse(step).then((dt) => {
-            //resData = { ...resData, ...dt }
-            // console.log('resData', resData);
-            //console.log('dt', dt);
             resolve(dt)
         });
     }

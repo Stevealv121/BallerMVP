@@ -1,17 +1,20 @@
 const { get, reply, getIA } = require('../adapter')
 const { saveExternalFile, checkIsUrl } = require('./handle')
-const { insertEvent, event } = require('../adapter/calendar')
+const { insertEvent, event } = require('../adapter/calendar');
+const { handleReservation } = require('./reservation');
 
 const getMessages = async (message) => {
-    const data = await get(message)
-    //Just for now, testing calendar integration
-    //TODO: Remove this later, but it worked!!
-    // insertEvent(event).then((res) => {
-    //     console.log(res);
-    // }).catch((err) => {
-    //     console.log(err);
-    // });
-    //console.log('data', data);
+    let data = 'DEFAULT';
+    console.log('message', message);
+    if (!isNaN(+message)) {
+        console.log('Entering handle reservation');
+        await handleReservation(+message);
+        data = 'HOUR';
+    } else {
+        console.log('Entering normal flow');
+        data = await get(message)
+    }
+
     return data
 }
 

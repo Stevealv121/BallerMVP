@@ -38,6 +38,49 @@ const dateTimeForCalendar = () => {
     }
 };
 
+const formatDate = (hour) => {
+    let date = new Date();
+    console.log('hour', hour);
+
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    if (month < 10) {
+        month = `0${month}`;
+    }
+    let day = date.getDate();
+    if (day < 10) {
+        day = `0${day}`;
+    }
+
+    if (hour < 10) {
+        hour = `0${hour}`;
+    }
+
+    let minute = date.getMinutes();
+    if (minute < 10) {
+        minute = `0${minute}`;
+    }
+
+    let newDateTime = `${year}-${month}-${day}T${hour}:${minute}:00.000${TIMEOFFSET}`;
+
+    let event = new Date(Date.parse(newDateTime));
+
+    let startDate = event;
+    let endDate = new Date(new Date(startDate).setHours(startDate.getHours() + 1));
+    console.log('startDate', startDate);
+    console.log('endDate', endDate);
+    return {
+        'start': {
+            'dateTime': startDate,
+            'timeZone': TIMEZONE
+        },
+        'end': {
+            'dateTime': endDate,
+            'timeZone': TIMEZONE
+        }
+    }
+};
+
 // Insert new event to Google Calendar
 const insertEvent = async (event) => {
 
@@ -145,4 +188,4 @@ const getEvents = async (dateTimeStart, dateTimeEnd) => {
 //         console.log(err);
 //     });
 
-module.exports = { insertEvent, getEvents, dateTimeForCalendar };
+module.exports = { insertEvent, getEvents, dateTimeForCalendar, formatDate };
