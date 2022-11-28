@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router()
-const { getQr } = require('../controllers/web')
+const { getQr, getCalendarEventById } = require('../controllers/web')
 
 router.use('/qr', getQr)
+router
+    .route('/event/:id')
+    .get(getCalendarEventById)
 
 module.exports = router

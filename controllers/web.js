@@ -1,5 +1,6 @@
 const fs = require('fs')
 const { sendMessage } = require('../controllers/send')
+const Calendar = require('../models/calendar')
 
 const sendMessagePost = (req, res) => {
     console.log('asdasdasdasdasd')
@@ -14,4 +15,10 @@ const getQr = (req, res) => {
     fs.createReadStream(`${__dirname}/../mediaSend/qr-code.svg`).pipe(res);
 }
 
-module.exports = { sendMessagePost, getQr }
+const getCalendarEventById = async (req, res) => {
+    const id = req.params.id;
+    const event = await Calendar.findOne({ owner_id: id });
+    res.send(event);
+}
+
+module.exports = { sendMessagePost, getQr, getCalendarEventById }
