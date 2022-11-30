@@ -11,6 +11,7 @@ const calendarSchema = new Schema({
     end: { type: mongoose.Schema.Types.Date, required: true },
     allDay: { type: Boolean, required: true },
     owner_id: { type: Number, required: true },
+    id: { type: String, required: true },
 });
 
 const Calendar = mongoose.model("calendar", calendarSchema, "calendar");

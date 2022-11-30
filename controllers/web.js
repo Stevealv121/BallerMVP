@@ -21,4 +21,10 @@ const getCalendarEventById = async (req, res) => {
     res.send(event);
 }
 
-module.exports = { sendMessagePost, getQr, getCalendarEventById }
+const getCalendarEventsByOwner = async (req, res) => {
+    const owner_id = req.params.id;
+    const events = await Calendar.find({ owner_id });
+    res.send(events);
+}
+
+module.exports = { sendMessagePost, getQr, getCalendarEventById, getCalendarEventsByOwner }
