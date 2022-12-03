@@ -1,6 +1,7 @@
 const fs = require('fs')
 const { sendMessage } = require('../controllers/send')
 const Calendar = require('../models/calendar')
+const mongoose = require('mongoose')
 
 const sendMessagePost = (req, res) => {
     console.log('asdasdasdasdasd')
@@ -27,4 +28,28 @@ const getCalendarEventsByOwner = async (req, res) => {
     res.send(events);
 }
 
-module.exports = { sendMessagePost, getQr, getCalendarEventById, getCalendarEventsByOwner }
+const addCalendarEvent = async (req, res) => {
+    const { title, start, end, allDay, owner_id, } = req.body;
+    var _id = new mongoose.Types.ObjectId();
+    const event = new Calendar({
+        _id: _id,
+        title: title,
+        start: start,
+        end: end,
+        allDay: allDay,
+        owner_id: owner_id,
+    });
+    event.save(function (err) {
+        if (err) {
+            return res.status(500).json({ 'message': `Error occurred: ${err}` });
+        } else {
+            return res.json({ 'message': 'Event created!' });
+        };
+    });
+}
+
+module.exports = {
+    sendMessagePost, getQr,
+    getCalendarEventById, getCalendarEventsByOwner,
+    addCalendarEvent
+}
