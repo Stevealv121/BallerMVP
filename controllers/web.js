@@ -48,8 +48,24 @@ const addCalendarEvent = async (req, res) => {
     });
 }
 
+const editCalendarEvent = async (req, res) => {
+    const { title, start, end, allDay, owner_id, _id } = req.body;
+    var objectID = new mongoose.Types.ObjectId(_id);
+    await Calendar.findOneAndUpdate({ _id: objectID }, {
+        title: title,
+        start: start,
+        end: end,
+        allDay: allDay,
+        owner_id: owner_id,
+    }, {
+        returnOriginal: false
+    });
+    res.status(200).json({ 'message': 'Event edited!' });
+}
+
+
 module.exports = {
     sendMessagePost, getQr,
     getCalendarEventById, getCalendarEventsByOwner,
-    addCalendarEvent
+    addCalendarEvent, editCalendarEvent
 }
