@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router()
 const { getQr, getCalendarEventById,
-    getCalendarEventsByOwner, addCalendarEvent, editCalendarEvent } = require('../controllers/web')
+    getCalendarEventsByOwner, addCalendarEvent, editCalendarEvent, deleteCalendarEvent } = require('../controllers/web')
 
 router.use('/qr', getQr)
 
@@ -13,5 +13,9 @@ router
     .route('/calendar/event')
     .post(addCalendarEvent)
     .put(editCalendarEvent)
+
+router
+    .route('/calendar/event/:id')
+    .delete(deleteCalendarEvent)
 
 module.exports = router

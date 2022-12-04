@@ -43,7 +43,7 @@ const addCalendarEvent = async (req, res) => {
         if (err) {
             return res.status(500).json({ 'message': `Error occurred: ${err}` });
         } else {
-            return res.json({ 'message': 'Event created!' });
+            return res.send(event)
         };
     });
 }
@@ -63,9 +63,22 @@ const editCalendarEvent = async (req, res) => {
     res.status(200).json({ 'message': 'Event edited!' });
 }
 
+const deleteCalendarEvent = async (req, res) => {
+    const _id = req.params.id;
+    var objectID = new mongoose.Types.ObjectId(_id);
+    const result = await Calendar.deleteOne({ _id: objectID });
+    if (result.deletedCount === 1) {
+        res.status(200).json({ 'message': 'Event deleted!' });
+    } else if (result.deletedCount === 0) {
+        res.status(404).json({ 'message': 'Event not found!' });
+    } else {
+        res.status(500).json({ 'message': 'Error occurred!' });
+    }
+}
+
 
 module.exports = {
     sendMessagePost, getQr,
     getCalendarEventById, getCalendarEventsByOwner,
-    addCalendarEvent, editCalendarEvent
+    addCalendarEvent, editCalendarEvent, deleteCalendarEvent
 }
